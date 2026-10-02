@@ -1,0 +1,19 @@
+Canteen Ordering System
+Build: 2026-10-02 Mobile Cart + Contact Order
+
+Customer:
+- Name required
+- Contact Number required
+- Table/Room required
+- Optional Note
+- Add to Cart
+- Top Cart icon + item badge
+- Fixed bottom Selected Items slider
+- Full responsive cart drawer
+- Direct SQLite Pending order
+
+Admin:
+- Contact number visible/click-to-call
+- Full food ordered details
+- Accept Order & Deduct Stock
+- Confirmed sales reports

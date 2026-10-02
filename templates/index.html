@@ -1,123 +1,61 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111827">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Canteen Ordering</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<header class="topbar">
-  <div class="container d-flex justify-content-between align-items-center gap-3">
-    <div>
+<header class="topbar sticky-top">
+  <div class="container topbar-inner">
+    <div class="brand-wrap">
       <div class="brand">🍽️ CANTEEN</div>
       <div class="subtitle">Fresh food • Easy ordering</div>
     </div>
-    <a href="{{ url_for('admin_login') }}" class="btn btn-sm btn-outline-light px-3">Admin</a>
+    <div class="top-actions">
+      <button id="topCartButton" class="top-cart-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" aria-label="Open shopping cart">
+        <span class="top-cart-icon">🛒</span>
+        <span id="topCartBadge" class="top-cart-badge">0</span>
+        <span class="top-cart-label">Cart</span>
+      </button>
+      <a href="{{ url_for('admin_login') }}" class="btn btn-sm btn-outline-light admin-link">Admin</a>
+    </div>
   </div>
 </header>
-
-<main class="container py-3 py-md-4">
-  <section class="hero-card mb-3 mb-md-4">
-    <h1>Order Your Food</h1>
-    <p class="mb-1">Choose your food, add it to your cart, and place your order.</p>
-    <small id="menuStatus">Loading menu...</small>
-  </section>
-
-  <div id="alertBox" aria-live="polite"></div>
-
-  <section class="card shadow-sm border-0">
-    <div class="card-body p-3 p-md-4">
-      <div class="category-scroll mb-3" aria-label="Food categories">
-        <button class="btn btn-dark category-btn active" data-category="All" type="button">All</button>
-        <button class="btn btn-outline-dark category-btn" data-category="Breakfast" type="button">Breakfast</button>
-        <button class="btn btn-outline-dark category-btn" data-category="Lunch" type="button">Lunch</button>
-        <button class="btn btn-outline-dark category-btn" data-category="Dinner" type="button">Dinner</button>
-        <button class="btn btn-outline-dark category-btn" data-category="Drinks" type="button">Drinks</button>
-        <button class="btn btn-outline-dark category-btn" data-category="Snacks" type="button">Snacks</button>
-      </div>
-      <div id="menu" class="row g-3"></div>
-    </div>
-  </section>
+<main class="container py-4 pb-5">
+<section class="hero-card mb-4"><h1>Order Your Food</h1><p class="mb-1">Select food and add it to your cart.</p><small id="menuStatus">Loading menu...</small></section>
+<div id="alertBox"></div>
+<div class="card shadow-sm"><div class="card-body">
+<div class="d-flex flex-wrap gap-2 mb-3"><button class="btn btn-dark category-btn active" data-category="All">All</button><button class="btn btn-outline-dark category-btn" data-category="Breakfast">Breakfast</button><button class="btn btn-outline-dark category-btn" data-category="Lunch">Lunch</button><button class="btn btn-outline-dark category-btn" data-category="Dinner">Dinner</button><button class="btn btn-outline-dark category-btn" data-category="Drinks">Drinks</button><button class="btn btn-outline-dark category-btn" data-category="Snacks">Snacks</button></div>
+<div id="menu" class="row g-3"></div>
+</div></div>
 </main>
 
-<!-- Always-accessible cart control. Tap/click to open the full cart. -->
-<button id="cartSlider" class="cart-slider" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" onclick="openCart()" aria-label="Open selected items cart">
-  <span class="cart-slider-icon" aria-hidden="true">🛒</span>
-  <span>
-    <strong class="cart-slider-title" id="cartSliderTitle">Your Cart is Empty</strong>
-    <small id="cartSliderSummary">Select food and add it to your cart</small>
-  </span>
-  <span class="cart-slider-total" id="cartSliderTotal">₹0.00</span>
-  <span class="cart-slider-arrow" aria-hidden="true">›</span>
+<!-- Compact cart slider/bar -->
+<button id="cartSlider" class="cart-slider" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" onclick="openCart()">
+  <span class="cart-slider-icon">🛒</span><span><strong id="cartSliderTitle">Selected Items</strong><small id="cartSliderSummary">No items selected</small></span><span class="cart-slider-total" id="cartSliderTotal">₹0</span><span class="cart-slider-arrow">›</span>
 </button>
 
-<!-- Full cart: side drawer on laptop/desktop, full-width drawer on mobile/tablet. -->
+<!-- Full cart opens from the slider -->
 <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartTitle">
-  <div class="offcanvas-header border-bottom">
-    <div>
-      <h4 class="offcanvas-title mb-0" id="cartTitle">🛒 Selected Items</h4>
-      <small class="text-muted" id="cartCountLabel">No items selected</small>
-    </div>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close cart"></button>
-  </div>
-
+  <div class="offcanvas-header border-bottom"><div><h4 class="offcanvas-title mb-0" id="cartTitle">🛒 Selected Items</h4><small class="text-muted" id="cartCountLabel">No items selected</small></div><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button></div>
   <div class="offcanvas-body">
-    <div class="cart-section-title">
-      <div>
-        <h6 class="fw-bold mb-0">Your Selected Food</h6>
-        <small class="text-muted">Adjust quantity or remove items before ordering.</small>
-      </div>
-    </div>
-    <div id="cart" aria-live="polite" class="mb-3"></div>
-
     <div class="customer-section mb-3">
       <h6 class="fw-bold mb-3">Customer Details</h6>
-      <div class="mb-3">
-        <label class="form-label fw-semibold" for="customerName">Customer Name <span class="text-danger">*</span></label>
-        <input id="customerName" class="form-control" maxlength="80" placeholder="Enter your name" autocomplete="name">
-      </div>
-      <div class="mb-3">
-        <label class="form-label fw-semibold" for="contactNumber">Contact Number <span class="text-danger">*</span></label>
-        <input id="contactNumber" class="form-control" type="tel" inputmode="tel" maxlength="15" placeholder="Enter contact number" autocomplete="tel">
-      </div>
-      <div class="mb-3">
-        <label class="form-label fw-semibold" for="tableRoom">Table / Room <span class="text-danger">*</span></label>
-        <input id="tableRoom" class="form-control" maxlength="50" placeholder="Example: Table 5">
-      </div>
-      <div>
-        <label class="form-label fw-semibold" for="note">Note</label>
-        <textarea id="note" class="form-control" rows="2" maxlength="250" placeholder="Optional note"></textarea>
-      </div>
+      <div class="mb-3"><label class="form-label">Customer Name <span class="text-danger">*</span></label><input id="customerName" class="form-control" maxlength="80" placeholder="Enter your name" autocomplete="name"></div>
+      <div class="mb-3"><label class="form-label">Contact Number <span class="text-danger">*</span></label><input id="contactNumber" class="form-control" type="tel" inputmode="tel" maxlength="15" placeholder="Enter contact number" autocomplete="tel"></div>
+      <div class="mb-3"><label class="form-label">Table / Room <span class="text-danger">*</span></label><input id="tableRoom" class="form-control" maxlength="50" placeholder="Example: Table 5"></div>
+      <div class="mb-3"><label class="form-label">Note</label><textarea id="note" class="form-control" rows="2" maxlength="250" placeholder="Optional note"></textarea></div>
     </div>
-
-    <div class="total-row">
-      <span>Total</span>
-      <strong id="cartTotal">₹0.00</strong>
-    </div>
-
-    <button id="placeOrderBtn" class="btn btn-primary w-100 mt-3" type="button" onclick="placeOrder()" disabled>Place Order</button>
-    <button class="btn btn-outline-secondary w-100 mt-2" type="button" onclick="clearCartAndFields()">Clear Cart & Details</button>
+    <div id="cart"></div>
+    <div class="total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
+    <button id="placeOrderBtn" class="btn btn-primary w-100 mt-3" onclick="placeOrder()" disabled>Place Order</button>
+    <button class="btn btn-outline-secondary w-100 mt-2" onclick="clearCartAndFields()">Clear</button>
     <div class="small text-muted mt-3">Your order is sent directly to the canteen system. The canteen will review and accept it.</div>
   </div>
 </div>
 
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body text-center p-4">
-        <div class="success-icon">✓</div>
-        <h3 id="successTitle">Order Placed</h3>
-        <p id="successText" class="mb-0"></p>
-        <button class="btn btn-dark mt-3 px-4" type="button" data-bs-dismiss="modal">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
-</body>
-</html>
+<div class="modal fade" id="successModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body text-center p-4"><div class="success-icon">✓</div><h3>Order Placed</h3><p id="successText" class="mb-0"></p><button class="btn btn-dark mt-3" data-bs-dismiss="modal">OK</button></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>
