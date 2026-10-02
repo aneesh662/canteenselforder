@@ -290,21 +290,13 @@ def create_order():
 
     if not name:
         return jsonify({"error": "Please enter customer name."}), 400
-    if len(name) > 80:
-        return jsonify({"error": "Customer name is too long."}), 400
     if not contact_number:
         return jsonify({"error": "Please enter contact number."}), 400
     digits = "".join(ch for ch in contact_number if ch.isdigit())
     if len(digits) < 10 or len(digits) > 15:
         return jsonify({"error": "Please enter a valid contact number (10-15 digits)."}), 400
-    if len(contact_number) > 20:
-        return jsonify({"error": "Contact number is too long."}), 400
     if not table_room:
         return jsonify({"error": "Please enter table or room number."}), 400
-    if len(table_room) > 50:
-        return jsonify({"error": "Table or room number is too long."}), 400
-    if len(note) > 250:
-        return jsonify({"error": "Note is too long."}), 400
     items = data.get("items", [])
 
     if not isinstance(items, list) or not items:
